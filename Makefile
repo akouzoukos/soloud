@@ -18,6 +18,13 @@ CXXFLAGS += -D WITH_SDL2_STATIC=1 -s USE_SDL=2
 
 SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.cpp)
 SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.c)
+
+else ifeq ($(PLATFORM),rgb30)
+CXXFLAGS += -D WITH_SDL2_STATIC=1 -lSDL2 -I/usr/include/SDL2 -fPIC -fPIE
+
+SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.cpp)
+SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.c)
+
 else
 CXXFLAGS += -D WITH_SDL2_STATIC=1 -lSDL2 -I/opt/devkitpro/portlibs/switch/include/SDL2 -fPIC -fPIE
 
