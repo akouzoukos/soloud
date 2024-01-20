@@ -69,7 +69,7 @@ static void* getDllProc(void * aLibrary, const char *aProcName)
 static void * openDll()
 {
 	void * res;
-	res = dlopen("libopenmpt.so", RTLD_LAZY);
+	res = dlopen("libopenmpt.so.0", RTLD_LAZY);
 	return res;
 }
 

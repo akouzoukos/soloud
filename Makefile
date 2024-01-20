@@ -13,6 +13,9 @@ SRCS += $(wildcard $(SRC)/**/*.c)
 SRCS += $(wildcard $(SRC)/audiosource/wav/*.cpp)
 SRCS += $(wildcard $(SRC)/audiosource/wav/*.c)
 
+SRCS += $(wildcard $(SRC)/audiosource/openmpt/*.cpp)
+SRCS += $(wildcard $(SRC)/audiosource/openmpt/*.c)
+
 ifeq ($(PLATFORM),wasm)
 CXXFLAGS += -D WITH_SDL2_STATIC=1 -s USE_SDL=2
 
@@ -20,7 +23,7 @@ SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.cpp)
 SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.c)
 
 else ifeq ($(PLATFORM),rgb30)
-CXXFLAGS += -D WITH_SDL2_STATIC=1 -lSDL2 -I/usr/include/SDL2 -fPIC -fPIE
+CXXFLAGS += -D WITH_SDL2_STATIC=1 -lSDL2 -I/usr/include/SDL2 -fPIC -fPIE -lmodplug
 
 SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.cpp)
 SRCS += $(wildcard $(SRC)/backend/sdl2_static/*.c)
