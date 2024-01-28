@@ -38,12 +38,13 @@ sources = files(
     'src' / 'audiosource' / 'wav' / 'dr_impl.cpp',
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt.cpp',
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt_dll.c',
-    'src' / 'backend' / 'sdl2_static' / 'soloud_sdl2_static.cpp',
+    'src' / 'backend' / 'sdl' / 'soloud_sdl2.cpp',
+    'src' / 'backend' / 'sdl' / 'soloud_sdl2_dll.c',
 )
 
 cmake = import('cmake')
 
-sdl = subproject('sdl2', default_options : ['default_library=static'])
+sdl = subproject('sdl2', default_options : ['default_library=shared'])
 
 cmake_options = cmake.subproject_options()
 cmake_options.add_cmake_defines({ 'BUILD_SHARED_LIBS' : 'ON' })
@@ -61,8 +62,7 @@ args = [
     '-O3',
     '-fpic',
     '-fpie',
-    '-D WITH_SDL2_STATIC=1',
-    '-I/usr/include/SDL2',
+    '-D WITH_SDL2=1',
 ]
 
 lib = static_library(
