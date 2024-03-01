@@ -70,6 +70,7 @@ static void * openDll()
 {
 	void * res;
 	res = dlopen("libopenmpt.so.0", RTLD_LAZY);
+	if (!res) res = dlopen("libopenmpt.dll", RTLD_LAZY);
 	return res;
 }
 
