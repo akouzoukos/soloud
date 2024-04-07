@@ -42,6 +42,7 @@ sources = files(
 )
 
 opus = dependency('opus', fallback : ['opus', 'opus_dep'])
+ogg = dependency('ogg', fallback : ['ogg', 'libogg_dep'])
 if host_machine.system() == 'emscripten' or host_machine.system() == 'horizon'
     openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
     sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
@@ -56,8 +57,9 @@ endif
 
 link_args = []
 deps = [
-    openmpt,
+    ogg,
     opus,
+    openmpt,
     sdl2_dep,
 ]
 
