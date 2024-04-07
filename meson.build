@@ -39,21 +39,26 @@ sources = files(
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt.cpp',
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt_dll.c',
     'src' / 'backend' / 'sdl' / 'soloud_sdl2.cpp',
-    'src' / 'backend' / 'sdl' / 'soloud_sdl2_dll.c',
 )
 
-cmake = import('cmake')
-
-sdl = subproject('sdl2', default_options : ['default_library=shared'])
-
-cmake_options = cmake.subproject_options()
-cmake_options.add_cmake_defines({ 'BUILD_SHARED_LIBS' : 'ON' })
-modplug = cmake.subproject('libmodplug', options : cmake_options)
+opus = dependency('opus', fallback : ['opus', 'opus_dep'])
+if host_machine.system() == 'emscripten' or host_machine.system() == 'horizon'
+    openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
+    sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
+    arg = '-D WITH_SDL2_STATIC=1'
+    sdl2_dep = dependency('sdl2', default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
+else
+    sources += files('src/backend/sdl/soloud_sdl2_dll.c')
+    arg = '-D WITH_SDL2=1'
+    sdl2_dep = dependency('sdl2', default_options : ['default_library=shared'], fallback : ['sdl2', 'sdl2_dep'])
+    openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
+endif
 
 link_args = []
 deps = [
-    modplug.dependency('modplug'),
-    sdl.get_variable('sdl2_dep')
+    openmpt,
+    opus,
+    sdl2_dep,
 ]
 
 inc = include_directories('include')
@@ -62,7 +67,7 @@ args = [
     '-O3',
     '-fpic',
     '-fpie',
-    '-D WITH_SDL2=1',
+    arg,
 ]
 
 lib = static_library(
