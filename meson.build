@@ -43,17 +43,11 @@ sources = files(
 
 opus = dependency('opus', fallback : ['opus', 'opus_dep'])
 ogg = dependency('ogg', fallback : ['ogg', 'libogg_dep'])
-if host_machine.system() == 'emscripten' or host_machine.system() == 'horizon'
-    openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
-    sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
-    arg = '-D WITH_SDL2_STATIC=1'
-    sdl2_dep = dependency('sdl2', default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
-else
-    sources += files('src/backend/sdl/soloud_sdl2_dll.c')
-    arg = '-D WITH_SDL2=1'
-    sdl2_dep = dependency('sdl2', default_options : ['default_library=shared'], fallback : ['sdl2', 'sdl2_dep'])
-    openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
-endif
+
+openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
+sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
+arg = '-DWITH_SDL2_STATIC=1'
+sdl2_dep = dependency('sdl2', default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
 
 link_args = []
 deps = [
