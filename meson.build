@@ -44,15 +44,6 @@ sources = files(
 opus = dependency('opus', fallback : ['opus', 'opus_dep'])
 ogg = dependency('ogg', fallback : ['ogg', 'libogg_dep'])
 
-if host_machine.system() == 'emscripten' or host_machine.system() == 'horizon'
-    vorbisfile = dependency('vorbisfile', static : true, default_options : ['default_library=static'], fallback : ['vorbis', 'vorbisfile_dep'])
-else
-    if host_machine.system() == 'linux'
-        vorbis = dependency('vorbis', default_options : ['default_library=static'], fallback : ['vorbis', 'vorbis_dep'])
-    endif
-    vorbisfile = dependency('vorbisfile', default_options : ['default_library=static'], fallback : ['vorbis', 'vorbisfile_dep'])
-endif
-
 openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
 sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
 arg = '-DWITH_SDL2_STATIC=1'
@@ -64,12 +55,7 @@ deps = [
     opus,
     openmpt,
     sdl2_dep,
-    vorbisfile,
 ]
-
-if host_machine.system() == 'linux'
-    deps += vorbis
-endif
 
 inc = include_directories('include')
 
