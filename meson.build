@@ -43,19 +43,26 @@ sources = files(
 
 opus = dependency('opus', fallback : ['opus', 'opus_dep'])
 ogg = dependency('ogg', fallback : ['ogg', 'libogg_dep'])
-
 openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
-sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
-arg = '-DWITH_SDL2_STATIC=1'
-sdl2_dep = dependency('sdl2', default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
 
-link_args = []
 deps = [
     ogg,
     opus,
     openmpt,
-    sdl2_dep,
 ]
+
+if get_option('portmaster')
+    sources += files('src/backend/sdl/soloud_sdl2_dll.c')
+    arg = '-DWITH_SDL2=1'
+    deps += dependency('sdl2', static : false, default_options : ['default_library=shared'], fallback : ['sdl2', 'sdl2_dep'])
+    deps += dependency('dl', static : true)
+else
+    sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
+    arg = '-DWITH_SDL2_STATIC=1'
+    deps += dependency('sdl2', static : true, default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
+endif
+
+link_args = []
 
 inc = include_directories('include')
 
