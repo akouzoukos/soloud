@@ -160,6 +160,10 @@ namespace SoLoud
 		if (mSoloud == 0 || mCount == 0 || aSound.mAudioSourceID == 0)
 			return false;
 		mSoloud->lockAudioMutex_internal();
+		if (mSource[mReadIndex] == nullptr) {
+			mSoloud->unlockAudioMutex_internal();
+			return false;
+		}
 		bool res = mSource[mReadIndex]->mAudioSourceID == aSound.mAudioSourceID;
 		mSoloud->unlockAudioMutex_internal();
 		return res;
