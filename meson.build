@@ -44,16 +44,24 @@ sources = files(
 
 cmake = import('cmake')
 
-sdl = subproject('sdl2', default_options : ['default_library=shared'])
+sdl2_dep = dependency(
+    'sdl2',
+    fallback : ['sdl2', 'sdl2_dep'],
+    default_options : ['default_library=shared']
+)
 
-cmake_options = cmake.subproject_options()
-cmake_options.add_cmake_defines({ 'BUILD_SHARED_LIBS' : 'ON' })
-modplug = cmake.subproject('libmodplug', options : cmake_options)
+modplug_dep = dependency('libmodplug', required : false)
+if not modplug_dep.found()
+    cmake_options = cmake.subproject_options()
+    cmake_options.add_cmake_defines({ 'BUILD_SHARED_LIBS' : 'ON' })
+    modplug = cmake.subproject('libmodplug', options : cmake_options)
+    modplug_dep = modplug.dependency('modplug')
+endif
 
 link_args = []
 deps = [
-    modplug.dependency('modplug'),
-    sdl.get_variable('sdl2_dep')
+    modplug_dep,
+    sdl2_dep
 ]
 
 inc = include_directories('include')
