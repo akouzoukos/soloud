@@ -39,30 +39,30 @@ sources = files(
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt.cpp',
     'src' / 'audiosource' / 'openmpt' / 'soloud_openmpt_dll.c',
     'src' / 'backend' / 'sdl' / 'soloud_sdl2.cpp',
-    'src' / 'backend' / 'sdl' / 'soloud_sdl2_dll.c',
 )
 
-cmake = import('cmake')
+opus = dependency('opus', fallback : ['opus', 'opus_dep'])
+ogg = dependency('ogg', fallback : ['ogg', 'libogg_dep'])
+openmpt = dependency('openmpt', default_options : ['default_library=static'], fallback : ['openmpt', 'openmpt_dep'])
 
-sdl2_dep = dependency(
-    'sdl2',
-    fallback : ['sdl2', 'sdl2_dep'],
-    default_options : ['default_library=shared']
-)
+deps = [
+    ogg,
+    opus,
+    openmpt,
+]
 
-modplug_dep = dependency('libmodplug', required : false)
-if not modplug_dep.found()
-    cmake_options = cmake.subproject_options()
-    cmake_options.add_cmake_defines({ 'BUILD_SHARED_LIBS' : 'ON' })
-    modplug = cmake.subproject('libmodplug', options : cmake_options)
-    modplug_dep = modplug.dependency('modplug')
+if get_option('portmaster')
+    sources += files('src/backend/sdl/soloud_sdl2_dll.c')
+    arg = '-DWITH_SDL2=1'
+    deps += dependency('sdl2', static : false, default_options : ['default_library=shared'], fallback : ['sdl2', 'sdl2_dep'])
+    deps += dependency('dl', static : true)
+else
+    sources += files('src/backend/sdl2_static/soloud_sdl2_static.cpp')
+    arg = '-DWITH_SDL2_STATIC=1'
+    deps += dependency('sdl2', static : true, default_options : ['default_library=static'], fallback : ['sdl2', 'sdl2_dep'])
 endif
 
 link_args = []
-deps = [
-    modplug_dep,
-    sdl2_dep
-]
 
 inc = include_directories('include')
 
@@ -70,7 +70,7 @@ args = [
     '-O3',
     '-fpic',
     '-fpie',
-    '-D WITH_SDL2=1',
+    arg,
 ]
 
 lib = static_library(

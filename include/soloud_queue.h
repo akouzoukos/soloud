@@ -58,14 +58,15 @@ namespace SoLoud
 		result setParamsFromAudioSource(AudioSource &aSound);
 		// Set params manually
 		result setParams(float aSamplerate, unsigned int aChannels = 2);
-		
+
+		void skip();
+
 	public:
 	    unsigned int mReadIndex, mWriteIndex, mCount;
 	    AudioSourceInstance *mSource[SOLOUD_QUEUE_MAX];
 		QueueInstance *mInstance;
 		handle mQueueHandle;
 		void findQueueHandle();
-		
 	};
 };
 

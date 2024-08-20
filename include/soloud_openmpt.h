@@ -26,6 +26,7 @@ freely, subject to the following restrictions:
 #define OPENMPT_H
 
 #include "soloud.h"
+#include <libopenmpt.h>
 
 namespace SoLoud
 {
@@ -35,7 +36,7 @@ namespace SoLoud
 	class OpenmptInstance : public AudioSourceInstance
 	{
 		Openmpt *mParent;
-		void *mModfile;
+		openmpt_module *mModfile;
 		int mPlaying;
 
 	public:

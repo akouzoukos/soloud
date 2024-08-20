@@ -185,4 +185,12 @@ namespace SoLoud
 		mBaseSamplerate = aSamplerate;
 	    return SO_NO_ERROR;
 	}
+
+	void Queue::skip()
+	{
+		delete mSource[mReadIndex];
+		mSource[mReadIndex] = 0;
+		mReadIndex = (mReadIndex + 1) % SOLOUD_QUEUE_MAX;
+		mCount--;
+	}
 };

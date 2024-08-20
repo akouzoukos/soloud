@@ -24,25 +24,19 @@ freely, subject to the following restrictions:
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "soloud_openmpt.h"
 #include "soloud_file.h"
-
-extern "C"
-{
-	void * openmpt_module_create_from_memory(const void * filedata, size_t filesize, void *logfunc, void * user,void * ctls);
-	void openmpt_module_destroy(void * mod);
-	int openmpt_module_read_float_stereo(void * mod, int samplerate, size_t count, float * left, float * right);
-	void openmpt_module_set_repeat_count(void* mod, int repeat_count);
-}
+#include "soloud_openmpt.h"
 
 namespace SoLoud
 {
 	OpenmptInstance::OpenmptInstance(Openmpt *aParent)
 	{
 		mParent = aParent;
-		mModfile = openmpt_module_create_from_memory((const void*)mParent->mData, mParent->mDataLen, NULL, NULL, NULL);		
-		openmpt_module_set_repeat_count(mModfile, -1);
-		mPlaying = mModfile != NULL;		
+		mModfile = openmpt_module_create_from_memory2((const void*)mParent->mData, mParent->mDataLen, NULL, NULL, NULL,
+                                                      NULL, NULL, NULL, NULL);
+		int loop = ((mParent->mFlags & AudioSource::SHOULD_LOOP) == 1)? -1 : 0;
+		openmpt_module_set_repeat_count(mModfile,loop);
+		mPlaying = mModfile != NULL;
 	}
 
 	unsigned int OpenmptInstance::getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize)
@@ -115,7 +109,8 @@ namespace SoLoud
 		}
 		aFile->read((unsigned char*)mData, mDataLen);
 
-		void *mpf = openmpt_module_create_from_memory((const void*)mData, mDataLen, NULL, NULL, NULL);
+		openmpt_module *mpf = openmpt_module_create_from_memory2((const void*)mData, mDataLen, NULL, NULL, NULL,
+                                                                 NULL, NULL, NULL, NULL);
 		if (!mpf)
 		{
 			delete[] mData;
